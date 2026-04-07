@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor AI Skills | UChicago Competency Map</title>
+    <!-- Fonts: EB Garamond (Serif) and Inter (Sans-serif fallback for Gotham) -->
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --uchicago-maroon: #800000;
+            --dark-greystone: #737373;
+            --greystone: #A6A6A6;
+            --light-greystone: #D9D9D9;
+            --white: #ffffff;
+            
+            /* Secondary Palette for Level Indicators */
+            --lvl-basic: #789D4A;      /* Ivy */
+            --lvl-intermediate: #007396; /* Lake */
+            --lvl-advanced: #EAAA00;     /* Goldenrod */
+
+            --font-sans: 'Inter', Helvetica, Arial, sans-serif;
+            --font-serif: 'EB Garamond', Georgia, serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--white);
+            color: #222;
+            line-height: 1.6;
+        }
+
+        /* Brand Header */
+        .brand-header {
+            background: var(--uchicago-maroon);
+            padding: 1.25rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: white;
+        }
+
+        .brand-header svg { width: 28px; height: 28px; fill: white; }
+        .brand-header h1 { font-size: 20px; font-weight: 500; letter-spacing: 0.02em; }
+
+        /* Layout */
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: calc(100vh - 75px);
+        }
+
+        @media (max-width: 1000px) {
+            .container { grid-template-columns: 1fr; }
+            .sidebar { position: static; border-left: none; border-top: 1px solid var(--greystone); }
+        }
+
+        /* Main Content / Map */
+        .main-content {
+            padding: 2rem;
+            background: #fff;
+        }
+
+        .intro {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--light-greystone);
+            padding-bottom: 1rem;
+        }
+
+        .intro h2 { font-family: var(--font-serif); font-size: 2rem; color: var(--uchicago-maroon); margin-bottom: 0.5rem; }
+
+        .domain-card {
+            margin-bottom: 2.5rem;
+        }
+
+        .domain-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--dark-greystone);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .domain-title::after { content: ""; height: 1px; background: var(--light-greystone); flex: 1; }
+
+        .skill-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .skill-node {
+            border: 1px solid var(--greystone);
+            padding: 1.25rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .skill-node:hover {
+            border-color: var(--uchicago-maroon);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .skill-node.active {
+            border-color: var(--uchicago-maroon);
+            background: #fcf8f8;
+            outline: 2px solid var(--uchicago-maroon);
+        }
+
+        .skill-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 1rem;
+            color: #111;
+        }
+
+        .level-pill {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 12px;
+            width: fit-content;
+            color: white;
+        }
+
+        .pill-basic { background: var(--lvl-basic); }
+        .pill-intermediate { background: var(--lvl-intermediate); }
+        .pill-advanced { background: var(--lvl-advanced); }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--light-greystone);
+            padding: 2rem;
+            border-left: 1px solid var(--greystone);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sticky-content { position: sticky; top: 0; }
+
+        .detail-placeholder {
+            text-align: center;
+            margin-top: 5rem;
+            color: var(--dark-greystone);
+        }
+
+        .detail-header span {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--dark-greystone);
+            text-transform: uppercase;
+        }
+
+        .detail-header h3 {
+            font-family: var(--font-serif);
+            font-size: 1.75rem;
+            color: var(--uchicago-maroon);
+            line-height: 1.2;
+            margin: 0.5rem 0 1.5rem 0;
+        }
+
+        .detail-desc {
+            font-size: 15px;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--uchicago-maroon);
+        }
+
+        .resource-section h4 {
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            color: var(--dark-greystone);
+        }
+
+        .resource-card {
+            display: block;
+            background: var(--white);
+            padding: 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            color: var(--uchicago-maroon);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .resource-card:hover {
+            border-color: var(--uchicago-maroon);
+        }
+
+        .resource-card small {
+            display: block;
+            color: var(--dark-greystone);
+            font-weight: 400;
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="brand-header">
+        <svg viewBox="0 0 20 20"><path d="M10 2L12.5 7.5H18L13.5 11L15.5 17L10 13.5L4.5 17L6.5 11L2 7.5H7.5L10 2Z"/></svg>
+        <h1>University of Chicago | Instructor AI Competency</h1>
+    </header>
+
+    <div class="container">
+        <main class="main-content">
+            <div class="intro">
+                <h2>Instructor AI Skills Map</h2>
+                <p>An interactive framework for leveraging Artificial Intelligence in pedagogy, course design, and student engagement.</p>
+            </div>
+
+            <div id="map-root"></div>
+        </main>
+
+        <aside class="sidebar" id="sidebar">
+            <div id="detail-view">
+                <div class="detail-placeholder">
+                    <p>Select a skill node to view descriptions, specific level criteria, and learning resources.</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        const aiSkillsData = [
+            {
+                domain: "1. Engagement & Design",
+                skills: [
+                    { id: "1.1", level: "basic", name: "Describe AI Usage", desc: "Describe clearly how you want students to use AI to accomplish or demonstrate a specific learning outcome.", resources: [{t:"AI Syllabus Statements", type:"Template"}] },
+                    { id: "1.2", level: "intermediate", name: "Explain Pitfalls", desc: "Clearly explain and demonstrate the uses of AI for a given learning outcome, including advantages and potential pitfalls.", resources: [{t:"The Case for Memorization (Barb Oakley)", type:"Video Interview"}] },
+                    { id: "1.3", level: "advanced", name: "Cognitive Lift Design", desc: "Use AI to plan class activities that require students to engage with AI tools while maintaining a high cognitive lift. (e.g., AI demonstrations, quick case studies).", resources: [{t:"Active Learning with AI", type:"Workshop"}] },
+                    { id: "1.4", level: "advanced", name: "Comprehensive Refinement", desc: "Use AI to plan and refine all materials: Learning outcomes, lecture scripts, presentations, custom GPTs for studying, and case studies.", resources: [{t:"UChicago Creative Resources", type:"Brand Assets"}] }
+                ]
+            },
+            {
+                domain: "2. Critical Reflection",
+                skills: [
+                    { id: "2.1", level: "basic", name: "Model Reflection", desc: "Model for students how to reflect on the impact of AI on learning and skill application with course content.", resources: [] },
+                    { id: "2.2", level: "intermediate", name: "Reflection Activities", desc: "Plan and execute reflection activities to help students consider how they are using AI tools and the impact on their learning work.", resources: [] },
+                    { id: "2.3", level: "advanced", name: "Culture of Reflection", desc: "Create a class culture where students initiate discussions about AI use and openly share their learnings about effective tool usage.", resources: [] }
+                ]
+            },
+            {
+                domain: "3. Planning & Ethics",
+                skills: [
+                    { id: "3.1", level: "basic", name: "AI Brainstorming", desc: "Use AI tools to brainstorm ideas for learning activities or outcomes with a focus on increasing student engagement.", resources: [] },
+                    { id: "3.2", level: "intermediate", name: "Alignment Checks", desc: "Use AI tools to check the alignment of class materials (syllabus, presentations) with course learning outcomes or daily objectives.", resources: [] },
+                    { id: "3.3", level: "intermediate", name: "Artifact Refinement", desc: "Refine slide decks, lecture scripts, and assignments using AI to improve clarity and organization.", resources: [] },
+                    { id: "3.4", level: "advanced", name: "Ethical Mitigation", desc: "Identify and mitigate possible ethical issues with using AI for learning design tasks.", resources: [] }
+                ]
+            },
+            {
+                domain: "4. Learning vs. Replacement",
+                skills: [
+                    { id: "4.1", level: "basic", name: "Instructional Clarity", desc: "Give students instructions for how to use AI on assignments with explanations of the 'Why' behind the methodology.", resources: [] },
+                    { id: "4.2", level: "intermediate", name: "Process Explanation", desc: "Regularly require students to use AI and explain their specific process for learning and applying new content.", resources: [] },
+                    { id: "4.3", level: "advanced", name: "Workplace Realism", desc: "Demonstrate how AI is used in the workplace/interviews related to course content and plan activities mimicking these practices.", resources: [] }
+                ]
+            },
+            {
+                domain: "5. Landscape & Evolution",
+                skills: [
+                    { id: "5.1", level: "basic", name: "General Literacy", desc: "Read and process information about new developments in AI generally.", resources: [] },
+                    { id: "5.2", level: "intermediate", name: "Discipline-Specific AI", desc: "Read and process information about new developments in AI specifically within your area of expertise and education.", resources: [] },
+                    { id: "5.3", level: "intermediate", name: "Active Experimentation", desc: "Experiment with new AI tools for personal productivity and for teaching.", resources: [] },
+                    { id: "5.4", level: "advanced", name: "Practice Cultivation", desc: "Cultivate a regular practice of experimentation and share findings regularly with students and colleagues.", resources: [] }
+                ]
+            },
+            {
+                domain: "6. TA Support",
+                skills: [
+                    { id: "6.1", level: "basic", name: "Ethical TA Boundaries", desc: "Explain ethical and non-ethical uses of AI for TA responsibilities (grading, tutoring, sessions).", resources: [] },
+                    { id: "6.2", level: "intermediate", name: "AI as Tutor", desc: "Teach students to use AI as an effective tutor for course content, including ways to apply and test learning.", resources: [] },
+                    { id: "6.3", level: "advanced", name: "Active TA Sessions", desc: "Plan TA sessions using AI tools to increase student engagement and allow for more practice opportunities.", resources: [] }
+                ]
+            }
+        ];
+
+        const root = document.getElementById('map-root');
+        const detailView = document.getElementById('detail-view');
+
+        function render() {
+            aiSkillsData.forEach(dom => {
+                const domEl = document.createElement('div');
+                domEl.className = 'domain-card';
+                domEl.innerHTML = `
+                    <div class="domain-title">${dom.domain}</div>
+                    <div class="skill-grid">
+                        ${dom.skills.map(s => `
+                            <div class="skill-node" id="node-${s.id}" onclick="selectSkill('${s.id}')">
+                                <div class="skill-name">${s.name}</div>
+                                <div class="level-pill pill-${s.level}">${s.level}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                root.appendChild(domEl);
+            });
+        }
+
+        function selectSkill(id) {
+            // UI Toggle
+            document.querySelectorAll('.skill-node').forEach(n => n.classList.remove('active'));
+            document.getElementById(`node-${id}`).classList.add('active');
+
+            // Data lookup
+            let skill;
+            let domainName;
+            aiSkillsData.forEach(d => {
+                const found = d.skills.find(s => s.id === id);
+                if(found) { skill = found; domainName = d.domain; }
+            });
+
+            // Update Sidebar
+            detailView.innerHTML = `
+                <div class="detail-header">
+                    <span>${domainName} • Level: ${skill.level}</span>
+                    <h3>${skill.name}</h3>
+                </div>
+                <div class="detail-desc">
+                    ${skill.desc}
+                </div>
+                <div class="resource-section">
+                    <h4>Recommended Resources</h4>
+                    ${skill.resources.length > 0 ? skill.resources.map(r => `
+                        <a href="#" class="resource-card">
+                            <small>${r.type}</small>
+                            ${r.t}
+                        </a>
+                    `).join('') : '<p style="font-size:13px; color:#666;">Resources for this level are being curated by the department.</p>'}
+                </div>
+            `;
+        }
+
+        render();
+    </script>
+</body>
+</html>
